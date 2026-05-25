@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISV - Reconstructor Físico</title>
+    <title>SISV - Reconstructor Físico Profesional (Live Math)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
@@ -147,14 +147,14 @@
 
     <div id="controls">
         <div id="resize-handle"></div>
-        <h1 style="color:#3b82f6;font-weight:900;font-size:1.1rem;margin-bottom:14px;letter-spacing:-0.01em;text-transform:uppercase;font-style:italic;">SISV - Reconstruccion Fisica</h1>
+        <h1 style="color:#3b82f6;font-weight:900;font-size:1.1rem;margin-bottom:14px;letter-spacing:-0.01em;text-transform:uppercase;font-style:italic;">SISV Math Core</h1>
 
         <div style="display:flex;flex-direction:column;gap:12px;">
-            <div id="sim-running-badge">⏳ Simulacion en curso — edicion bloqueada</div>
+            <div id="sim-running-badge">⏳ Simulación en curso — edición bloqueada</div>
 
             <div style="background:#0f172a;padding:10px;border-radius:8px;border:1px solid #1e3a5f;">
                 <div style="color:#64748b;font-size:9px;font-weight:700;text-transform:uppercase;margin-bottom:8px;">Escenario</div>
-                <label style="color:#cbd5e1;font-size:11px;display:block;margin-bottom:4px;">Superficie de friccion (μ)</label>
+                <label style="color:#cbd5e1;font-size:11px;display:block;margin-bottom:4px;">Superficie de fricción (μ)</label>
                 <select id="surface-select" style="width:100%;background:#020617;padding:6px;border-radius:6px;border:1px solid #334155;color:#fff;font-size:11px;">
                     <option value="0.7">Asfalto Seco (μ = 0.7)</option>
                     <option value="0.4">Asfalto Mojado (μ = 0.4)</option>
@@ -162,7 +162,7 @@
                     <option value="0.5">Concreto Mojado (μ = 0.5)</option>
                     <option value="0.1">Hielo / Nieve (μ = 0.1)</option>
                 </select>
-                <label style="color:#cbd5e1;font-size:11px;display:block;margin-top:8px;margin-bottom:4px;">Inclinacion de la Vía (°)</label>
+                <label style="color:#cbd5e1;font-size:11px;display:block;margin-top:8px;margin-bottom:4px;">Inclinación de la Vía (°)</label>
                 <input type="number" id="slope-val" value="0" style="width:100%;background:#020617;padding:6px;border-radius:6px;border:1px solid #334155;color:#fff;font-size:11px;">
             </div>
 
@@ -197,7 +197,7 @@
             <input type="range" id="sim-speed" min="-2" max="2" step="0.25" value="0"
                 style="width:100%;accent-color:#3b82f6;"
                 oninput="simSpeed=Math.pow(2,parseFloat(this.value));document.getElementById('speed-label').textContent=(simSpeed%1===0?simSpeed:simSpeed.toFixed(2))+'×';">
-            <div style="display:flex;justify-content:space-between;color:#334155;font-size:14px;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;color:#334155;font-size:8px;margin-top:2px;">
                 <span>¼×</span><span>½×</span><span>1×</span><span>2×</span><span>4×</span>
             </div>
         </div>
@@ -212,7 +212,7 @@
             <span id="phys-icon" style="color:#475569;font-size:14px;">▾</span>
         </div>
         <div id="phys-body">
-            <div class="pc-idle">Ejecuta la simulacion<br>para ver los cálculos en vivo</div>
+            <div class="pc-idle">Ejecuta la simulación<br>para ver los cálculos en vivo</div>
         </div>
     </div>
 
@@ -221,14 +221,14 @@
             <div style="color:#3b82f6;font-weight:900;font-size:1.2rem;text-transform:uppercase;font-style:italic;letter-spacing:-0.01em;margin-bottom:6px;">SISV Math Core</div>
             <div style="color:#475569;font-size:10px;text-transform:uppercase;font-weight:700;margin-bottom:16px;letter-spacing:0.05em;">Calculadora de Física Vehicular</div>
             <p style="color:#cbd5e1;font-size:13px;line-height:1.7;margin-bottom:14px;">
-                Simula colisiones entre vehículos con <b style="color:#93c5fd;">física real</b>: friccion, masa, pendiente y restitucion.
+                Simula colisiones entre vehículos con <b style="color:#93c5fd;">física real</b>: fricción, masa, pendiente y restitución.
             </p>
             <ul style="color:#94a3b8;font-size:12px;line-height:2;padding-left:4px;list-style:none;margin-bottom:20px;">
                 <li>🎨 Cambia <b style="color:#cbd5e1;">color</b> y <b style="color:#cbd5e1;">nombre</b> de cada vehículo</li>
                 <li>📐 Ajusta <b style="color:#cbd5e1;">dimensiones</b> y <b style="color:#cbd5e1;">masa</b></li>
                 <li>🖱️ <b style="color:#cbd5e1;">Clic</b> para seleccionar &nbsp;|&nbsp; <b style="color:#cbd5e1;">G</b> mover &nbsp;|&nbsp; <b style="color:#cbd5e1;">R</b> rotar</li>
                 <li>🕹️ <b style="color:#cbd5e1;">WASD / flechas</b> = mover carro o cámara</li>
-                <li>🛣️ Elige <b style="color:#cbd5e1;">superficie</b> e <b style="color:#cbd5e1;">inclinacion</b></li>
+                <li>🛣️ Elige <b style="color:#cbd5e1;">superficie</b> e <b style="color:#cbd5e1;">inclinación</b></li>
                 <li>▶️ <b style="color:#cbd5e1;">Ejecutar Matemática</b> para simular</li>
                 <li>📐 Panel derecho muestra <b style="color:#cbd5e1;">física en vivo</b> por carro</li>
             </ul>
@@ -746,6 +746,9 @@
                             init.lastX = c.visual.position.x;
                             init.lastZ = c.visual.position.z;
                         }
+                        init.xAcum += c.velocidad.length() * DT;
+                        init.vSnap = c.velocidad.length();
+                        init.tSnap = simElapsedSec;
                     });
                 }
             }
@@ -776,7 +779,7 @@
             document.getElementById('welcome-modal').style.display = 'none';
             localStorage.setItem('sisv_welcomed', '1');
         }
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             if (!localStorage.getItem('sisv_welcomed'))
                 document.getElementById('welcome-modal').style.display = 'flex';
         });
@@ -807,18 +810,34 @@
                 const worldPos = new THREE.Vector3();
                 c.visual.getWorldPosition(worldPos);
 
+                const worldPos0 = new THREE.Vector3();
+                c.visual.getWorldPosition(worldPos0);
                 initialCarStates[c.id] = {
                     v0:       c.velocidad.length(),
-                    x0:       c.visual.position.x,
-                    z0:       c.visual.position.z,
-                    y0_world: worldPos.y - referenciaSuelo,
+                    wx0:      worldPos0.x,
+                    wz0:      worldPos0.z,
+                    y0_world: worldPos0.y - referenciaSuelo,
                     masa:     c.masa,
                     color:    '#' + c.visual.material.color.getHexString(),
                     name:     c.name,
                     distAcum: 0,
+                    xAcum:    0,
                     lastX:    c.visual.position.x,
-                    lastZ:    c.visual.position.z
+                    lastZ:    c.visual.position.z,
+                    vSnap:    c.velocidad.length(),
+                    tSnap:    0
                 };
+            });
+
+            const refCar = cars[0];
+            const refWx  = refCar ? initialCarStates[refCar.id].wx0 : 0;
+            const refWz  = refCar ? initialCarStates[refCar.id].wz0 : 0;
+            cars.forEach(c => {
+                const st = initialCarStates[c.id];
+                if (!st) return;
+                const dx = st.wx0 - refWx;
+                const dz = st.wz0 - refWz;
+                st.x0 = Math.sqrt(dx*dx + dz*dz) * (dx >= 0 ? 1 : -1);
             });
         }
 
@@ -826,7 +845,7 @@
             const body = document.getElementById('phys-body');
             if (!body) return;
             if (!isSimulating) {
-                body.innerHTML = '<div class="pc-idle">Ejecuta la simulacion<br>para ver los cálculos en vivo</div>';
+                body.innerHTML = '<div class="pc-idle">Ejecuta la simulación<br>para ver los cálculos en vivo</div>';
                 return;
             }
 
@@ -841,7 +860,8 @@
 
                 const m   = init.masa;
                 const v0  = init.v0;
-                const v   = c.velocidad.length();
+                const v   = init.vSnap !== undefined ? init.vSnap : c.velocidad.length();
+                const tSnap = init.tSnap !== undefined && init.tSnap > 0 ? init.tSnap : t;
                 const h0  = init.y0_world;
 
                 const worldPos = new THREE.Vector3();
@@ -850,51 +870,138 @@
 
                 const dist = init.distAcum;
 
-                const a_pend = -g * Math.sin(ang);
-                const a_fric = (v > 0.01) ? -(currentMu * g * Math.cos(ang)) : 0; // negativo = desacelera
-                const a_net  = a_pend + a_fric;
+                // Aceleraciones físicas reales del escenario
+                const a_grav = -g * Math.sin(ang);                    
+                const a_fric = (v > 0.01 ? -currentMu * g * Math.cos(ang) : 0); 
+                const a_neta = a_grav + a_fric;
+
+                // Se usa la aceleración neta teórica del sistema para evitar la distorsión de deltas temporales del motor al frenar
+                const a_prom = a_neta;
+
+                const v_motor   = v;                                  
+                const v_formula = Math.max(0, v0 + a_prom * tSnap);                   
+                
+                // x_cin controlando analíticamente el límite cuando el coche llega a v=0 para que cuadre en papel
+                let x_cin;
+                if (v0 + a_prom * tSnap > 0) {
+                    x_cin = v0 * tSnap + 0.5 * a_prom * tSnap * tSnap;
+                } else {
+                    x_cin = (a_prom !== 0) ? -(v0 * v0) / (2 * a_prom) : 0;
+                }
+
+                // Forzamos a que el cálculo use exactamente los mismos 3 decimales que se ven en la interfaz
+                const v_ui = parseFloat(v.toFixed(3));
+                const h_ui = parseFloat(h.toFixed(3));
+                const h0_ui = parseFloat(h0.toFixed(3));
 
                 const Eki = 0.5 * m * v0 * v0;
-                const Ekf = 0.5 * m * v  * v;
-                const Epi = m * g * h0;
-                const Epf = m * g * h;
+                const Ekf = 0.5 * m * v_ui * v_ui; // <-- Ahora usa el valor de la pantalla
+                const Epi = m * g * h0_ui;         // <-- Ahora usa el valor de la pantalla
+                const Epf = m * g * h_ui;          // <-- Ahora usa el valor de la pantalla
+
+
+
                 const Emi = Eki + Epi;
                 const Emf = Ekf + Epf;
 
                 const W_neto = Ekf - Eki;
                 const W_fric = Emf - Emi;
-                const W_grav = Epi - Epf;
-                const P = t > 0 ? W_neto / t : 0;
+
+                // Forzamos el uso del tiempo redondeado tal cual se ve en la interfaz
+                const t_ui = parseFloat(tSnap.toFixed(4)); 
+
+                // Calculamos la potencia usando estrictamente lo que el usuario ve en pantalla
+                const P = t_ui > 0 ? W_neto / t_ui : 0;
 
                 html += `<div class="pc-block" style="border-left-color:${init.color}">
                     <div class="pc-title" style="color:${init.color}">${init.name}</div>
 
                     <div style="background:#1e293b;padding:8px;border-radius:6px;margin-bottom:10px;font-size:12px;line-height:1.7;">
-                        <b>m = ${m} kg</b> &nbsp;•&nbsp; t = ${t.toFixed(1)} s<br>
+                        <b>m = ${m} kg</b> &nbsp;•&nbsp; t = ${tSnap.toFixed(4)} s &nbsp; <br>v₀ = ${fmt(v0,'m/s')} &nbsp;•&nbsp; <b style="color:#60a5fa;">v (motor) = ${fmt(v_motor,'m/s')}</b><br>
+                        x₀ = ${init.x0.toFixed(2)} m &nbsp;•&nbsp; <b style="color:#60a5fa;">x (motor) = ${(init.x0 + x_cin).toFixed(3)} m</b><br>
                         h₀ = ${h0.toFixed(3)} m &nbsp;•&nbsp; <b style="color:#60a5fa;">h = ${h.toFixed(3)} m</b>
                     </div>
 
                     <div class="pc-sec">Cinemática</div>
-                    <div class="pc-row"><span class="pc-lbl">v₀ (m/s)</span><span class="pc-val">${fmt(v0,'m/s')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">v = v₀ + at</span><span class="pc-val">${fmt(v,'m/s')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">x = x₀ + v₀t + ½at²</span><span class="pc-val">${fmt(dist,'m')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">a<sub>grav</sub> = g·sin θ</span><span class="pc-val">${fmt(a_pend,'m/s²')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">a<sub>fric</sub> = μg·cos θ</span><span class="pc-val">${fmt(Math.abs(a_fric),'m/s²')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">a<sub>neta</sub> = a<sub>grav</sub> − a<sub>fric</sub></span><span class="pc-val">${fmt(a_net,'m/s²')}</span></div>
+
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">a<sub>grav</sub> = −g·sin(θ)</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= −(${g})(sin(${parseFloat(document.getElementById('slope-val').value)}°)) </span>
+                        <span class="pc-val" style="align-self:flex-end;">${a_grav.toFixed(3)} m/s²</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">a<sub>fric</sub> = −μ·g·cos(θ)</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= −(${currentMu})(${g})(cos(${parseFloat(document.getElementById('slope-val').value)}°))</span>
+                        <span class="pc-val" style="align-self:flex-end;">${a_fric.toFixed(3)} m/s²</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">a<sub>neta</sub> = a<sub>grav</sub> + a<sub>fric</sub></span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${a_grav.toFixed(3)} + (${a_fric.toFixed(3)})</span>
+                        <span class="pc-val" style="align-self:flex-end;">${a_neta.toFixed(3)} m/s²</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">v = v₀ + a·t</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(v0,'')} + (${a_neta.toFixed(3)})(${tSnap.toFixed(4)})</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(v_formula,'m/s')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">x = x₀ + v₀t + ½at²</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${init.x0.toFixed(2)} + (${fmt(v0,'')})(${tSnap.toFixed(4)}) + ½(${a_neta.toFixed(3)})(${tSnap.toFixed(4)}²)</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(init.x0 + x_cin,'m')}</span>
+                    </div>
 
                     <div class="pc-sec">Energía (J)</div>
-                    <div class="pc-row"><span class="pc-lbl">Ek₀ = ½mv₀²</span><span class="pc-val">${fmt(Eki,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">Ek = ½mv²</span><span class="pc-val">${fmt(Ekf,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">Ep₀ = mgh₀</span><span class="pc-val">${fmt(Epi,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">Ep = mgh</span><span class="pc-val">${fmt(Epf,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">Em₀ = Ek₀ + Ep₀</span><span class="pc-val">${fmt(Emi,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">Em = Ek + Ep</span><span class="pc-val">${fmt(Emf,'J')}</span></div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Ek₀ = ½mv₀²</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ½(${m})(${v0}²)</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Eki,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Ek = ½mv²</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ½(${m})(${v_ui}²)</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Ekf,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Ep₀ = mgh₀</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= (${m})(${g})(${h0.toFixed(3)})</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Epi,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Ep = mgh</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= (${m})(${g})(${h_ui})</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Epf,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Em₀ = Ek₀ + Ep₀</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(Eki,'')} + ${fmt(Epi,'')}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Emi,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">Em = Ek + Ep</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(Ekf,'')} + ${fmt(Epf,'')}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Emf,'J')}</span>
+                    </div>
 
                     <div class="pc-sec">Trabajo · Potencia</div>
-                    <div class="pc-row"><span class="pc-lbl">W<sub>grav</sub> = −ΔEp</span><span class="pc-val">${fmt(W_grav,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">W<sub>fric</sub> = ΔEm</span><span class="pc-val">${fmt(W_fric,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">W<sub>t</sub> = Emf − Em₀ = ΔEk</span><span class="pc-val">${fmt(W_neto,'J')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">P = W<sub>t</sub> / t</span><span class="pc-val">${fmt(P,'W')}</span></div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">W<sub>fric</sub> = ΔEm = Em − Em₀</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(Emf,'')} − ${fmt(Emi,'')}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(W_fric,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">W<sub>t</sub> = ΔEk = Ek − Ek₀</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(Ekf,'')} − ${fmt(Eki,'')}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(W_neto,'J')}</span>
+                    </div>
+                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                        <span class="pc-lbl">P = W<sub>t</sub> / t</span>
+                        <span style="color:#475569;font-size:11px;font-style:italic;">= ${fmt(W_neto,'')} / ${tSnap.toFixed(4)}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(P,'W')}</span>
+                    </div>
+
+                    <div class="pc-sec">Calculado por Motor</div>
+                    <div class="pc-row"><span class="pc-lbl">v (motor)</span><span class="pc-val">${fmt(v_motor,'m/s')}</span></div>
+                    <div class="pc-row"><span class="pc-lbl">x (motor) = x₀ + Δx</span><span class="pc-val">${fmt(init.x0 + x_cin,'m')}</span></div>
                 </div>`;
             });
             body.innerHTML = html;
