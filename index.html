@@ -163,7 +163,10 @@
                     <option value="0.1">Hielo / Nieve (μ = 0.1)</option>
                 </select>
                 <label style="color:#cbd5e1;font-size:11px;display:block;margin-top:8px;margin-bottom:4px;">Inclinación de la Vía (°)</label>
-                <input type="number" id="slope-val" value="0" style="width:100%;background:#020617;padding:6px;border-radius:6px;border:1px solid #334155;color:#fff;font-size:11px;">
+                <label style="color:#475569;font-size:9px;display:block;margin-top:2px;">Rango: −45° a 45°</label>
+                <input type="number" id="slope-val" value="0" min="-45" max="45" step="1"
+                    style="width:100%;background:#020617;padding:6px;border-radius:6px;border:1px solid #334155;color:#fff;font-size:11px;"
+                    oninput="this.value=Math.min(45,Math.max(-45,parseFloat(this.value)||0))">
             </div>
 
             <div style="background:rgba(15,23,42,0.6);padding:8px 10px;border-radius:6px;color:#64748b;font-size:12px;line-height:1.9;">
@@ -361,7 +364,7 @@
             document.getElementById('sim-btn').addEventListener('click', startSim);
             document.getElementById('reset-btn').addEventListener('click', resetScene);
             document.getElementById('slope-val').addEventListener('input', (e) => {
-                const val = parseFloat(e.target.value);
+                const val = Math.min(45, Math.max(-45, parseFloat(e.target.value) || 0));
                 sistemaInclinado.rotation.z = val * (Math.PI / 180);
             });
 
@@ -532,14 +535,16 @@
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
                     <div>
-                        <label style="color:#475569;font-size:11px;display:block;margin-bottom:2px;">Vel (m/s)</label>
-                        <input type="number" id="v-${id}" value="${velocity}"
-                            style="width:100%;background:#020617;padding:5px;border-radius:4px;border:1px solid #334155;color:#fff;font-size:11px;">
+                        <label style="color:#475569;font-size:11px;display:block;margin-bottom:2px;">Vel (m/s) <span style="color:#334155;font-size:9px;">[-200, 200]</span></label>
+                        <input type="number" id="v-${id}" value="${velocity}" min="-200" max="200" step="0.1"
+                            style="width:100%;background:#020617;padding:5px;border-radius:4px;border:1px solid #334155;color:#fff;font-size:11px;"
+                            oninput="this.value=Math.min(200,Math.max(-200,parseFloat(this.value)||0))">
                     </div>
                     <div>
-                        <label style="color:#475569;font-size:11px;display:block;margin-bottom:2px;">Masa (kg)</label>
-                        <input type="number" id="m-${id}" value="1500"
+                        <label style="color:#475569;font-size:11px;display:block;margin-bottom:2px;">Masa (kg) <span style="color:#334155;font-size:9px;">[100, 50000]</span></label>
+                        <input type="number" id="m-${id}" value="1500" min="100" max="50000" step="10"
                             style="width:100%;background:#020617;padding:5px;border-radius:4px;border:1px solid #334155;color:#fff;font-size:11px;"
+                            oninput="this.value=Math.min(50000,Math.max(100,parseFloat(this.value)||100));updateCarMass(${id}, this.value)"
                             onchange="updateCarMass(${id}, this.value)">
                     </div>
                 </div>
@@ -549,6 +554,16 @@
                 </button>
             `;
             document.getElementById('vehiculos-list').appendChild(div);
+            updateAddCarBtn();
+        }
+
+        function updateAddCarBtn() {
+            const btn = document.getElementById('add-car-btn');
+            const full = cars.length >= 5;
+            btn.disabled = full;
+            btn.textContent = full ? '⛔ Máximo 5 vehículos' : '+ Nuevo Vehículo';
+            btn.style.opacity = full ? '0.4' : '1';
+            btn.style.cursor = full ? 'not-allowed' : 'pointer';
         }
 
         window.updateCarColor = function(id, hex) {
@@ -577,8 +592,17 @@
 
         function addCarRandom() {
             if (isSimulating) return;
+            if (cars.length >= 5) {
+                alert('Máximo 5 vehículos permitidos.');
+                return;
+            }
             const colors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6];
-            addCar((Math.random()-0.5)*30, (Math.random()-0.5)*30, `Vehículo ${cars.length + 1}`, colors[Math.floor(Math.random()*colors.length)], 0);
+            // Velocidad inicial apuntando hacia el centro de la escena
+            const spawnX = (Math.random() - 0.5) * 30;
+            const spawnZ = (Math.random() - 0.5) * 30;
+            const dirToCenter = Math.atan2(-spawnZ, -spawnX);
+            const speed = 10 + Math.floor(Math.random() * 10);
+            addCar(spawnX, spawnZ, `Vehículo ${cars.length + 1}`, colors[cars.length % colors.length], speed);
         }
 
         window.removeCar = function(id) {
@@ -590,6 +614,7 @@
             document.getElementById(`car-panel-${id}`).remove();
             if (selectedCarId === id) transformControl.detach();
             cars.splice(idx, 1);
+            updateAddCarBtn();
         }
 
         function startSim() {
@@ -602,8 +627,12 @@
             updateCarPanels();
 
             cars.forEach(c => {
-                const vVal = parseFloat(document.getElementById(`v-${c.id}`).value);
-                c.masa = parseFloat(document.getElementById(`m-${c.id}`).value);
+                const vRaw = parseFloat(document.getElementById(`v-${c.id}`).value) || 0;
+                const vVal = Math.min(200, Math.max(-200, vRaw));
+                document.getElementById(`v-${c.id}`).value = vVal;
+                const mRaw = parseFloat(document.getElementById(`m-${c.id}`).value) || 1500;
+                c.masa = Math.min(50000, Math.max(100, mRaw));
+                document.getElementById(`m-${c.id}`).value = c.masa;
                 const direccion = new THREE.Vector3(1, 0, 0).applyQuaternion(c.visual.quaternion).normalize();
                 c.velocidad.copy(direccion).multiplyScalar(vVal);
             });
