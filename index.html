@@ -926,10 +926,9 @@
                 const Emi = Eki + Epi;
                 const Emf = Ekf + Epf;
 
-                const W_neto = Ekf - Eki;
-                const W_fric = Emf - Emi;
-                const t_ui = parseFloat(tSnap.toFixed(4)); 
-                const P = t_ui > 0 ? W_neto / t_ui : 0;
+                const Wt = Emf - Emi;
+                const t_ui = parseFloat(tSnap.toFixed(4));
+                const P = t_ui > 0 ? Wt / t_ui : 0;
 
                 html += `<div class="pc-block" style="border-left-color:${init.color}">
                     <div class="pc-title" style="color:${init.color}">${init.name}</div>
@@ -1003,18 +1002,13 @@
 
                     <div class="pc-sec">Trabajo · Potencia</div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
-                        <span class="pc-lbl">W<sub>fric</sub> = ΔEm = Em − Em₀</span>
+                        <span class="pc-lbl">W<sub>t</sub> = Emf − Emi</span>
                         <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(Emf,'')} − ${fmt(Emi,'')}</span>
-                        <span class="pc-val" style="align-self:flex-end;">${fmt(W_fric,'J')}</span>
+                        <span class="pc-val" style="align-self:flex-end;">${fmt(Wt,'J')}</span>
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
-                        <span class="pc-lbl">W<sub>t</sub> = ΔEk = Ek − Ek₀</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(Ekf,'')} − ${fmt(Eki,'')}</span>
-                        <span class="pc-val" style="align-self:flex-end;">${fmt(W_neto,'J')}</span>
-                    </div>
-                    <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
-                        <span class="pc-lbl">P = dW<sub>t</sub> / dt</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(W_neto,'')} / ${tSnap.toFixed(4)}</span>
+                        <span class="pc-lbl">P = W<sub>t</sub> / Δt</span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(Wt,'')} / ${tSnap.toFixed(4)}</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(P,'W')}</span>
                     </div>
                 </div>`;
