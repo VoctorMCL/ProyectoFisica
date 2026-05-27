@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; overflow: hidden; background: #020617; font-family: system-ui; }
@@ -125,7 +124,6 @@
         .pc-block { background: #0f172a; border-radius: 7px; padding: 8px 10px; border-left: 3px solid #3b82f6; }
         .pc-title  { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
         .pc-sec    { color: #3b82f6; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin: 7px 0 3px; }
-        .pc-form   { color: #475569; font-size: 13px; font-style: italic; margin-bottom: 3px; }
         .pc-row    { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:2px;
                      background:rgba(59,130,246,0.06); border:1px solid #1e293b;
                      border-radius:4px; padding:3px 7px; margin-bottom:2px; }
@@ -597,10 +595,8 @@
                 return;
             }
             const colors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6];
-            // Velocidad inicial apuntando hacia el centro de la escena
             const spawnX = (Math.random() - 0.5) * 30;
             const spawnZ = (Math.random() - 0.5) * 30;
-            const dirToCenter = Math.atan2(-spawnZ, -spawnX);
             const speed = 10 + Math.floor(Math.random() * 10);
             addCar(spawnX, spawnZ, `Vehículo ${cars.length + 1}`, colors[cars.length % colors.length], speed);
         }
@@ -614,7 +610,6 @@
             document.getElementById(`car-panel-${id}`).remove();
             if (selectedCarId === id) transformControl.detach();
             cars.splice(idx, 1);
-            updateAddCarBtn();
         }
 
         function startSim() {
@@ -662,7 +657,6 @@
             const cosTheta = Math.cos(anguloRad);
 
             cars.forEach(c => {
-                const m = c.masa;
                 const halfH = c.visual.geometry.parameters.height / 2;
                 const suelo = halfH;
 
@@ -687,8 +681,6 @@
                         const dirMov = velXZ.clone().normalize();
                         const frictionMag = currentMu * GRAVEDAD * cosTheta;
                         const a_pend = GRAVEDAD * sinTheta;
-                        const a_fric = frictionMag;
-                        const a_neta = a_pend - a_fric;
                         const dirOpuesta = dirMov.clone().negate();
                         c.velocidad.x += (dirMov.x * (-a_pend) + dirOpuesta.x * frictionMag) * dt;
                         c.velocidad.z += (dirMov.z * (-a_pend) + dirOpuesta.z * frictionMag) * dt;
@@ -715,9 +707,8 @@
 
                     const p1 = new THREE.Vector2(c1.visual.position.x, c1.visual.position.z);
                     const p2 = new THREE.Vector2(c2.visual.position.x, c2.visual.position.z);
-                    const diff = new THREE.Vector2().subVectors(p2, p1);
-                    const dist = diff.length();
-                    if (dist < 0.001) diff.set(1, 0);
+                    const dist = new THREE.Vector2().subVectors(p2, p1).length();
+                    if (dist < 0.001) continue;
 
                     const overlapX = (box1.max.x - box1.min.x)/2 + (box2.max.x - box2.min.x)/2 - Math.abs(c2.visual.position.x - c1.visual.position.x);
                     const overlapZ = (box1.max.z - box1.min.z)/2 + (box2.max.z - box2.min.z)/2 - Math.abs(c2.visual.position.z - c1.visual.position.z);
@@ -777,7 +768,14 @@
                         }
                         init.xAcum += c.velocidad.length() * DT;
                         init.vSnap = c.velocidad.length();
-                        init.tSnap = simElapsedSec;
+                        const vActual = c.velocidad.length();
+                        if (vActual > 0.01) {
+                            init.tSnap = simElapsedSec; // Sigue actualizando mientras se mueve
+                            init.wasMoving = true;
+                        } else if (init.wasMoving) {
+                            init.tSnap = simElapsedSec; // Congela el 't' en el instante exacto del frenado
+                            init.wasMoving = false;
+                        }
                     });
                 }
             }
@@ -854,7 +852,9 @@
                     lastX:    c.visual.position.x,
                     lastZ:    c.visual.position.z,
                     vSnap:    c.velocidad.length(),
-                    tSnap:    0
+                    tSnap:    0,
+
+                    wasMoving: c.velocidad.length() > 0.01
                 };
             });
 
@@ -889,49 +889,45 @@
 
                 const m   = init.masa;
                 const v0  = init.v0;
-                const v   = init.vSnap !== undefined ? init.vSnap : c.velocidad.length();
-                const tSnap = init.tSnap !== undefined && init.tSnap > 0 ? init.tSnap : t;
+                const vActual = c.velocidad.length();
+                const tSnap = (vActual > 0.01) ? t : init.tSnap;
                 const h0  = init.y0_world;
 
                 const worldPos = new THREE.Vector3();
                 c.visual.getWorldPosition(worldPos);
                 const h = worldPos.y - referenciaSuelo;
-
                 const dist = init.distAcum;
 
-                const a_grav = -g * Math.sin(ang);                    
-                const a_fric = (v > 0.01 ? -currentMu * g * Math.cos(ang) : 0); 
+                const a_grav = -g * Math.sin(ang);
+
+                // v_formula provisional sin fricción para saber si el carro sigue en movimiento
+                const v_test = v0 + a_grav * tSnap;
+                const a_fric = (v_test > 0.01 || v0 > 0.01) ? -currentMu * g * Math.cos(ang) : 0;
                 const a_neta = a_grav + a_fric;
 
-                const a_prom = a_neta;
+                // v y x por fórmula (consistentes entre sí y con el panel)
+                const v_formula = Math.max(0, v0 + a_neta * tSnap);
 
-                const v_motor   = v;                                  
-                const v_formula = Math.max(0, v0 + a_prom * tSnap);                   
-                
                 let x_cin;
-                if (v0 + a_prom * tSnap > 0) {
-                    x_cin = v0 * tSnap + 0.5 * a_prom * tSnap * tSnap;
+                if (v0 + a_neta * tSnap > 0) {
+                    x_cin = v0 * tSnap + 0.5 * a_neta * tSnap * tSnap;
                 } else {
-                    x_cin = (a_prom !== 0) ? -(v0 * v0) / (2 * a_prom) : 0;
+                    x_cin = a_neta !== 0 ? -(v0 * v0) / (2 * a_neta) : 0;
                 }
 
-                const v_ui = parseFloat(v.toFixed(3));
-                const h_ui = parseFloat(h.toFixed(3));
-                const h0_ui = parseFloat(h0.toFixed(3));
+                const v0_ui = parseFloat(v0.toFixed(3));
+                const v_ui = parseFloat(v_formula.toFixed(3));
 
-                const Eki = 0.5 * m * v0 * v0;
+                const Eki = 0.5 * m * v0_ui * v0_ui;
                 const Ekf = 0.5 * m * v_ui * v_ui;
-                const Epi = m * g * h0_ui;
-                const Epf = m * g * h_ui;
-
-
-
+                
+                const Epi = m * g * h0;
+                const Epf = m * g * h;
                 const Emi = Eki + Epi;
                 const Emf = Ekf + Epf;
 
                 const W_neto = Ekf - Eki;
                 const W_fric = Emf - Emi;
-
                 const t_ui = parseFloat(tSnap.toFixed(4)); 
                 const P = t_ui > 0 ? W_neto / t_ui : 0;
 
@@ -939,16 +935,17 @@
                     <div class="pc-title" style="color:${init.color}">${init.name}</div>
 
                     <div style="background:#1e293b;padding:8px;border-radius:6px;margin-bottom:10px;font-size:12px;line-height:1.7;">
-                        <b>m = ${m} kg</b> &nbsp;•&nbsp; t = ${tSnap.toFixed(4)} s &nbsp; <br>v₀ = ${fmt(v0,'m/s')} &nbsp;•&nbsp; <b style="color:#60a5fa;">v (motor) = ${fmt(v_motor,'m/s')}</b><br>
-                        x₀ = ${init.x0.toFixed(2)} m &nbsp;•&nbsp; <b style="color:#60a5fa;">x (motor) = ${(init.x0 + x_cin).toFixed(3)} m</b><br>
+                        <b>m = ${m} kg</b> &nbsp;•&nbsp; t = ${tSnap.toFixed(4)} s<br>
+                        v₀ = ${v0} m/s &nbsp;•&nbsp; <b style="color:#60a5fa;">v = ${fmt(v_formula,'m/s')}</b><br>
+                        x₀ = ${init.x0.toFixed(3)} m &nbsp;•&nbsp; <b style="color:#60a5fa;">x = ${fmt(init.x0 + x_cin,'m')}</b><br>
                         h₀ = ${h0.toFixed(3)} m &nbsp;•&nbsp; <b style="color:#60a5fa;">h = ${h.toFixed(3)} m</b>
                     </div>
 
-                    <div class="pc-sec">Cinematica</div>
+                    <div class="pc-sec">Cinemática</div>
 
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                         <span class="pc-lbl">a<sub>grav</sub> = −g·sin(θ)</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= −(${g})(sin(${parseFloat(document.getElementById('slope-val').value)}°)) </span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= −(${g})(sin(${parseFloat(document.getElementById('slope-val').value)}°))</span>
                         <span class="pc-val" style="align-self:flex-end;">${a_grav.toFixed(3)} m/s²</span>
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -963,12 +960,12 @@
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                         <span class="pc-lbl">v = v₀ + a·t</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(v0,'')} + (${a_neta.toFixed(3)})(${tSnap.toFixed(4)})</span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${v0} + (${a_neta.toFixed(3)})(${tSnap.toFixed(4)})</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(v_formula,'m/s')}</span>
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                         <span class="pc-lbl">x = x₀ + v₀t + ½at²</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${init.x0.toFixed(2)} + (${fmt(v0,'')})(${tSnap.toFixed(4)}) + ½(${a_neta.toFixed(3)})(${tSnap.toFixed(4)}²)</span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= ${init.x0.toFixed(3)} + (${v0})(${tSnap.toFixed(4)}) + ½(${a_neta.toFixed(3)})(${tSnap.toFixed(4)}²)</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(init.x0 + x_cin,'m')}</span>
                     </div>
 
@@ -980,7 +977,7 @@
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                         <span class="pc-lbl">Ek = ½mv²</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= ½(${m})(${v_ui}²)</span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= ½(${m})(${v_formula.toFixed(3)}²)</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(Ekf,'J')}</span>
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -990,7 +987,7 @@
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                         <span class="pc-lbl">Ep = mgh</span>
-                        <span style="color:#475569;font-size:12px;font-style:italic;">= (${m})(${g})(${h_ui})</span>
+                        <span style="color:#475569;font-size:12px;font-style:italic;">= (${m})(${g})(${h.toFixed(3)})</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(Epf,'J')}</span>
                     </div>
                     <div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -1020,10 +1017,6 @@
                         <span style="color:#475569;font-size:12px;font-style:italic;">= ${fmt(W_neto,'')} / ${tSnap.toFixed(4)}</span>
                         <span class="pc-val" style="align-self:flex-end;">${fmt(P,'W')}</span>
                     </div>
-
-                    <div class="pc-sec">Calculado por Motor</div>
-                    <div class="pc-row"><span class="pc-lbl">v (motor)</span><span class="pc-val">${fmt(v_motor,'m/s')}</span></div>
-                    <div class="pc-row"><span class="pc-lbl">x (motor)</span><span class="pc-val">${fmt(init.x0 + x_cin,'m')}</span></div>
                 </div>`;
             });
             body.innerHTML = html;
